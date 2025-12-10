@@ -254,46 +254,50 @@ CResult<double, CError> CTree::calculateValue(CNode* node) const {
     std::string token = node->getVal();
     int ar = arityOf(token);
     if (ar > 0) {
+        CResult<double, CError> left = calculateValue(node->getChild(0));
+        if (!left.bIsSuccess()) {
+            return CResult<double, CError>::cFail(left.vGetErrors());
+        }
+        double a = left.cGetValue();
+        if (node->getVal() == "sin") {
+            return CResult<double, CError>::cOk(sin(a));
+        }
+        if (node->getVal() == "cos") {
+            return CResult<double, CError>::cOk(cos(a));
+        }
+        CResult<double, CError> right = calculateValue(node->getChild(1));
+        if (!right.bIsSuccess()) {
+            return CResult<double, CError>::cFail(right.vGetErrors());
+        }
+        double b = right.cGetValue();
         if (token == "+") {
-            double a = calculateValue(node->getChild(0)).cGetValue();
-            double b = calculateValue(node->getChild(1)).cGetValue();
             return CResult<double, CError>::cOk(a + b);
         }
         if (token == "-") {
-            double a = calculateValue(node->getChild(0)).cGetValue();
-            double b = calculateValue(node->getChild(1)).cGetValue();
             return CResult<double, CError>::cOk(a - b);
         }
         if (token == "*") {
-            double a = calculateValue(node->getChild(0)).cGetValue();
-            double b = calculateValue(node->getChild(1)).cGetValue();
             return CResult<double, CError>::cOk(a * b);
         }
         if (token == "/") {
-            double a = calculateValue(node->getChild(0)).cGetValue();
-            double b = calculateValue(node->getChild(1)).cGetValue();
             if (b == 0) {
-				return CResult<double, CError>::cFail(new CError("Division by zero"));
+                return CResult<double, CError>::cFail(new CError("Division by zero"));
             }
             else {
                 return CResult<double, CError>::cOk(a / b);
             }
         }
-        if (node->getVal() == "sin") {
-            double a = calculateValue(node->getChild(0)).cGetValue();
-            return CResult<double, CError>::cOk(sin(a));
-        }
-        if (node->getVal() == "cos") {
-            double a = calculateValue(node->getChild(0)).cGetValue();
-            return CResult<double, CError>::cOk(cos(a));
-        }
     }
     else {
-        return CResult<double, CError>::cOk(dict.at(node->getVal()));
+        if (dict.find(node->getVal()) != dict.end()) {
+            return CResult<double, CError>::cOk(dict.at(node->getVal()));
+        }
+        else {
+            return CResult<double, CError>::cFail(new CError("Variable not assigned a value"));
+        }
     }
     return CResult<double, CError>::cFail(new CError("Unknown variable"));
 }
-
 CNode* CTree::getRoot() const {
     return root;
 }
