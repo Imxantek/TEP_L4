@@ -1,0 +1,4 @@
+Operation succeeded. Current CTree:
++ 45 AB 
+Operation failed with errors:
+- Too many operands
