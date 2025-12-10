@@ -138,12 +138,17 @@ CResult<void, CError> CTree::enter(std::string& exp) {
 
 
 
-void CTree::join(std::string& exp) {
+CResult<void, CError> CTree::join(std::string& exp) {
     CTree newTree;
-    newTree.enter(exp);
+    CResult<void, CError> res = newTree.enter(exp);
+    if (!res.bIsSuccess()) {
+        return res;
+    }
+
     *this = *this + newTree;
     std::cout << "New tree:\n";
     print();
+	return CResult<void, CError>::cOk();
 }
 
 CNode* CTree::cloneSubtree(CNode* node) const {
@@ -198,9 +203,9 @@ CResult<void, CError> CTree::vars() {
 	return CResult<void, CError>::cOk();
 }
 
-void CTree::runSurvey(CNode* node, std::vector<int>* vec) {
+CResult<void, CError> CTree::runSurvey(CNode* node, std::vector<int>* vec) {
     if (node == nullptr) {
-        return;
+        return CResult<void, CError>::cOk();
     }
     std::string key = node->getVal();
     int ar = arityOf(key);
@@ -218,7 +223,7 @@ void CTree::runSurvey(CNode* node, std::vector<int>* vec) {
                 vec->erase(vec->begin());
             }
             else {
-                throw std::exception("Insufficient variable assignments provided");
+				return CResult<void, CError>::cFail(new CError("Not enough variable assignments provided"));
             }
         }
         else {
@@ -226,13 +231,20 @@ void CTree::runSurvey(CNode* node, std::vector<int>* vec) {
         }
     }
     for (int i = 0; i < node->childCount(); i++) {
-        runSurvey(node->getChild(i), vec);
+        CResult<void, CError> res = runSurvey(node->getChild(i), vec);
+        if (!res.bIsSuccess()) {
+            return res;
+        }
     }
+	return CResult<void, CError>::cOk();
 }
 
 CResult<void,CError> CTree::comp(std::vector<int> vec) {
     dict.clear();
-    runSurvey(root, &vec);
+    CResult<void, CError> surveyResult = runSurvey(root, &vec);
+    if (!surveyResult.bIsSuccess()) {
+        return surveyResult;
+    }
     if (vec.size() != 0) {
 		return CResult<void, CError>::cFail(new CError("Too many variable assignments provided"));
         

@@ -31,7 +31,7 @@ public:
 	CNode* deepestLeft(CNode* node) const;
 
 	CResult<void, CError> enter(std::string& exp);
-	void join(std::string& exp);
+	CResult<void, CError> join(std::string& exp);
 	CResult<void, CError> print() const;
 	void print(CNode* node) const;
 	void scanDict(CNode* node);
@@ -39,7 +39,7 @@ public:
 	bool isNumber(const std::string& s);
 	CResult<void, CError> vars();
 	CResult<void, CError> comp(std::vector<int> vec);
-	void runSurvey(CNode* node, std::vector<int>* vec);
+	CResult<void, CError> runSurvey(CNode* node, std::vector<int>* vec);
 	CResult<double, CError> calculateValue(CNode* node) const;
 
 	CNode* getRoot() const;

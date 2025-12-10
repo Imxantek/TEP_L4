@@ -16,7 +16,7 @@ private:
 	CResult<void, CError> vars();
 	CResult<void, CError> print ();
 	CResult<void, CError> comp();
-	void join();
+	CResult<void, CError> join();
 public:
 	UI();
 	~UI();

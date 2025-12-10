@@ -67,7 +67,14 @@ void UI::run() {
 			}
 		}
 		else if (sel == "join") {
-			join();
+			CResult<void, CError> result = join();
+			logger.log(result);
+			if (result.bIsSuccess()) {
+				std::cout << "\nCTrees joined successfully.\n";
+			}
+			else {
+				result.printErrors();
+			}
 		}
 		else if (sel == "exit") {
 			std::cout << "Thank you for using my program\n Goodbye!";
@@ -143,10 +150,11 @@ CResult<void, CError> UI::comp() {
 	return result;
 }
 
-void UI::join() {
+CResult<void, CError> UI::join() {
 	std::cout << "Enter the formula of the CTree you will be joining:\n";
 	std::string exp;
 	std::getline(std::cin, exp);
-	t->join(exp);
+	CResult<void, CError> result = t->join(exp);
+	return result;
 }
 //
