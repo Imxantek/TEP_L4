@@ -95,13 +95,13 @@ CResult<CTree*, CError> UI::enter() {
 	//std::cout << "Enter your expression:\n";
 	std::string exp;
 	std::getline(std::cin, exp);
-	try {
-		t->enter(exp);
+	CResult<void, CError> result = t->enter(exp);
+	if (result.bIsSuccess()) {
+		return CResult<CTree*, CError>::cOk(t);
 	}
-	catch (std::invalid_argument& e) {
-		return CResult<CTree*, CError>::cFail(new CError(e.what()));
+	else {
+		return CResult<CTree*, CError>::cFail(result.vGetErrors());
 	}
-	return CResult<CTree*, CError>::cOk(t);
 }
 
 CResult<void, CError> UI::vars() {

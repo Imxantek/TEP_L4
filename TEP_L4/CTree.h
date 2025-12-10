@@ -1,6 +1,8 @@
 #ifndef CTREE_H_
 #define CTREE_H_
 #include "CNode.h"
+#include "CError.h"
+#include "CResult.h"
 #include<queue>
 #include<map>
 #include<vector>
@@ -28,7 +30,7 @@ public:
 	CNode* cloneSubtree(CNode* node) const;
 	CNode* deepestLeft(CNode* node) const;
 
-	void enter(std::string& exp);
+	CResult<void, CError> enter(std::string& exp);
 	void join(std::string& exp);
 	void print() const;
 	void print(CNode* node) const;

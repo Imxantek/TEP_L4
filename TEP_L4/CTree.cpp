@@ -106,7 +106,7 @@ CNode* CTree::parse(std::string& exp, int& pos) {
 }
 
 
-void CTree::enter(std::string& exp) {
+CResult<void, CError> CTree::enter(std::string& exp) {
     dict.clear();
     std::string fixed;
     int requiredOperands = 1;
@@ -124,15 +124,16 @@ void CTree::enter(std::string& exp) {
         fixed += (token + " ");
     }
     if (operands < requiredOperands) {
-        throw std::invalid_argument("Not enough operands");
+		return CResult<void, CError>::cFail(new CError("Not enough operands"));
     }
     else if (operands > requiredOperands) {
-		throw std::invalid_argument("Too many operands");
+		return CResult<void, CError>::cFail(new CError("Too many operands"));
     }
     std::cout << "Processed expression:\n ";
     pos = 0;
     root = parse(fixed, pos);
     std::cout << std::endl;
+	return CResult<void, CError>::cOk();
 }
 
 
