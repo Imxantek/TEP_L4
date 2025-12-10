@@ -133,7 +133,7 @@ CResult<void, CError> CTree::enter(std::string& exp) {
     pos = 0;
     root = parse(fixed, pos);
     std::cout << std::endl;
-	return CResult<void, CError>::cOk();
+    return CResult<void, CError>::cOk();
 }
 
 
@@ -171,7 +171,7 @@ bool CTree::isNumber(const std::string& s) {
     return true;
 }
 
-void CTree::vars() {
+CResult<void, CError> CTree::vars() {
     dict.clear();
     scanDict(root);
 
@@ -185,7 +185,7 @@ void CTree::vars() {
     }
 
     if (!hasVariable) {
-        throw std::exception("No variables in this equation.");
+        return CResult<void, CError>::cFail(new CError("No variables in this equation."));
     }
 
     std::cout << "Variables used in this equation:\n";
@@ -195,6 +195,7 @@ void CTree::vars() {
         }
     }
     std::cout << std::endl;
+	return CResult<void, CError>::cOk();
 }
 
 void CTree::runSurvey(CNode* node, std::vector<int>* vec) {
@@ -229,79 +230,80 @@ void CTree::runSurvey(CNode* node, std::vector<int>* vec) {
     }
 }
 
-void CTree::comp(std::vector<int> vec) {
+CResult<void,CError> CTree::comp(std::vector<int> vec) {
     dict.clear();
     runSurvey(root, &vec);
     if (vec.size() != 0) {
-		throw std::exception("Too many variable assignments provided");
-        return;
+		return CResult<void, CError>::cFail(new CError("Too many variable assignments provided"));
+        
     }
-    try {
-        std::cout << "Value of entered equation:\n" << calculateValue(root) << std::endl;
+	CResult<double, CError> res=calculateValue(root);
+    if (res.bIsSuccess()) {
+        std::cout << "Value of entered equation:\n" << res.cGetValue() << std::endl;
+        return CResult<void, CError>::cOk();
     }
-    catch (std::exception) {
-        throw std::exception("Division by zero");
+    else {
+		return CResult<void, CError>::cFail(res.vGetErrors());
     }
 }
 
-double CTree::calculateValue(CNode* node) const {
+CResult<double, CError> CTree::calculateValue(CNode* node) const {
     if (node == nullptr) {
-        return 0;
+        return CResult<double, CError>::cOk(0.0);
     }
     std::string token = node->getVal();
     int ar = arityOf(token);
     if (ar > 0) {
         if (token == "+") {
-            double a = calculateValue(node->getChild(0));
-            double b = calculateValue(node->getChild(1));
-            return a + b;
+            double a = calculateValue(node->getChild(0)).cGetValue();
+            double b = calculateValue(node->getChild(1)).cGetValue();
+            return CResult<double, CError>::cOk(a + b);
         }
         if (token == "-") {
-            double a = calculateValue(node->getChild(0));
-            double b = calculateValue(node->getChild(1));
-            return a - b;
+            double a = calculateValue(node->getChild(0)).cGetValue();
+            double b = calculateValue(node->getChild(1)).cGetValue();
+            return CResult<double, CError>::cOk(a - b);
         }
         if (token == "*") {
-            double a = calculateValue(node->getChild(0));
-            double b = calculateValue(node->getChild(1));
-            return a * b;
+            double a = calculateValue(node->getChild(0)).cGetValue();
+            double b = calculateValue(node->getChild(1)).cGetValue();
+            return CResult<double, CError>::cOk(a * b);
         }
         if (token == "/") {
-            double a = calculateValue(node->getChild(0));
-            double b = calculateValue(node->getChild(1));
+            double a = calculateValue(node->getChild(0)).cGetValue();
+            double b = calculateValue(node->getChild(1)).cGetValue();
             if (b == 0) {
-				throw std::exception("Division by zero");
-                return 0;
+				return CResult<double, CError>::cFail(new CError("Division by zero"));
             }
             else {
-                return a / b;
+                return CResult<double, CError>::cOk(a / b);
             }
         }
         if (node->getVal() == "sin") {
-            double a = calculateValue(node->getChild(0));
-            return sin(a);
+            double a = calculateValue(node->getChild(0)).cGetValue();
+            return CResult<double, CError>::cOk(sin(a));
         }
         if (node->getVal() == "cos") {
-            double a = calculateValue(node->getChild(0));
-            return cos(a);
+            double a = calculateValue(node->getChild(0)).cGetValue();
+            return CResult<double, CError>::cOk(cos(a));
         }
     }
     else {
-        return dict.at(node->getVal());
+        return CResult<double, CError>::cOk(dict.at(node->getVal()));
     }
-    return 0;
+    return CResult<double, CError>::cFail(new CError("Unknown variable"));
 }
 
 CNode* CTree::getRoot() const {
     return root;
 }
 
-void CTree::print() const {
+CResult<void, CError> CTree::print() const {
     if(root== nullptr) {
-		throw std::exception("Tree is empty");
-        return;
+		return CResult<void, CError>::cFail(new CError("Tree is empty"));
 	}
     print(root);
+    return CResult<void, CError>::cOk();
 }
 void CTree::print(CNode* node) const {
     if (!node) {

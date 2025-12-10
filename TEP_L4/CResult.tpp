@@ -6,7 +6,7 @@ CResult<T, E>::CResult(const T& cValue){
 template<typename T, typename E>
 CResult<T, E>::CResult(E* pcError){
     pc_value = nullptr;
-    v_errors.push_back(pcError);
+    v_errors.push_back(new E(*pcError));
 }
 
 template<typename T, typename E>
@@ -14,7 +14,7 @@ CResult<T, E>::CResult(std::vector<E*>& vErrors){
     pc_value = nullptr;
 
     for (int i = 0; i < vErrors.size(); ++i)
-        v_errors.push_back(vErrors[i]);
+        v_errors.push_back(new E(*vErrors[i]));
 }
 
 template<typename T, typename E>
@@ -115,7 +115,7 @@ CResult<void, E>::CResult(E* pcError) {
 template<typename E>
 CResult<void, E>::CResult(std::vector<E*>& vErrors) {
     for (int i = 0; i < vErrors.size(); ++i)
-        v_errors.push_back(vErrors[i]);
+        v_errors.push_back(new E(*vErrors[i]));
 }
 
 template<typename E>

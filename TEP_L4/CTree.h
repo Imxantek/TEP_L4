@@ -32,15 +32,15 @@ public:
 
 	CResult<void, CError> enter(std::string& exp);
 	void join(std::string& exp);
-	void print() const;
+	CResult<void, CError> print() const;
 	void print(CNode* node) const;
 	void scanDict(CNode* node);
 	bool containsVars();
 	bool isNumber(const std::string& s);
-	void vars();
-	void comp(std::vector<int> vec);
+	CResult<void, CError> vars();
+	CResult<void, CError> comp(std::vector<int> vec);
 	void runSurvey(CNode* node, std::vector<int>* vec);
-	double calculateValue(CNode* node) const;
+	CResult<double, CError> calculateValue(CNode* node) const;
 
 	CNode* getRoot() const;
 };

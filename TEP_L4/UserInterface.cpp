@@ -105,22 +105,13 @@ CResult<CTree*, CError> UI::enter() {
 }
 
 CResult<void, CError> UI::vars() {
-	try {
-		t->vars();
-	}catch(std::exception e) {
-		return CResult<void, CError>::cFail(new CError(e.what()));
-	}
-	return CResult<void, CError>::cOk();
+	CResult<void, CError> result = t->vars();
+	return result;
 }
 
 CResult<void, CError> UI::print() {
-	try {
-		t->print();
-	}
-	catch (std::exception e) {
-		return CResult<void, CError>::cFail(new CError(e.what()));
-	}
-	return CResult<void, CError>::cOk();
+	CResult<void, CError> result = t->print();
+	return result;
 }
 
 bool isNumber(const std::string& s) {
@@ -148,14 +139,10 @@ CResult<void, CError> UI::comp() {
 			return CResult<void, CError>::cFail(new CError("Non-numeric value entered in comp command."));
 		}
 	}
-	try {
-		t->comp(vec);
-	}
-	catch (std::exception e) {
-		return CResult<void, CError>::cFail(new CError(e.what()));
-	}
-	return CResult<void, CError>::cOk();
+	CResult<void, CError> result=t->comp(vec);
+	return result;
 }
+
 void UI::join() {
 	std::cout << "Enter the formula of the CTree you will be joining:\n";
 	std::string exp;
