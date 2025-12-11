@@ -174,4 +174,32 @@ void CResult<void, E>::printErrors() const {
         std::cout << v_errors[i]->strGetMessage() << std::endl;
     }
 }
-//
+
+
+
+//modyfikacja
+template <typename E>
+CResult<std::string, E>::CResult(const char* value) {
+    if (value != nullptr)
+        this->pc_value = std::string(value);
+    else
+        this->pc_value = "";
+}
+template <typename E>
+CResult<std::string, E>::CResult(E* error) {
+    this->pc_value = "";
+    v_errors.push_back(new E(*error));
+}
+
+template <typename E>
+CResult<std::string, E> CResult<std::string, E>::cOk(CResult<const char*, E> value) {
+    return CResult<std::string, E>(value.cGetValue());
+}
+template <typename E>
+std::string CResult<std::string, E>::cGetValue() const{
+    return pc_value;
+}
+template <typename E>
+CResult<std::string, E> CResult<std::string, E>::cFail(E* error) {
+    return CResult<std::string, E>(error);
+}

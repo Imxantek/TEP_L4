@@ -13,6 +13,7 @@ public:
 	CResult(vector<E*>& vErrors);
 	CResult(const CResult<T, E>& pcOther);
 	~CResult();
+
 	static CResult<T, E> cOk(const T& value);
 	static CResult<T, E> cFail(E* pcError);
 	static CResult<T, E> cFail(vector<E*>& vErrors);
@@ -44,7 +45,29 @@ public:
 	
 };
 
+template <typename E>
+class CResult<std::string, E> {
+private:
+	std::string pc_value;
+	std::vector<E*> v_errors;
+public:
+	CResult(const char* value);
+	CResult(E* pcError);
+	CResult(std::vector<E*>& vec);
+	CResult(const CResult<std::string, E>& pcOther);
+	~CResult();
+
+	static CResult<std::string, E> cOk(CResult<const char*, E> value);
+	static CResult<std::string, E> cFail(E* Error);
+	static CResult<std::string, E> cFail(vector<E*>& vErrors);
+	
+	std::string cGetValue() const;
+	CResult<std::string, E>& operator=(const CResult<std::string, E>& pcOther);
+	bool bIsSuccess() const;
+	vector<E*>& vGetErrors();
+	void printErrors() const;
+};
+
 
 
 #include "CResult.tpp"
-//
