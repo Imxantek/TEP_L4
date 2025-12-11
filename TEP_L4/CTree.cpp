@@ -106,7 +106,7 @@ CNode* CTree::parse(std::string& exp, int& pos) {
 }
 
 
-CResult<void, CError> CTree::enter(std::string& exp) {
+CResult<CTree*, CError> CTree::enter(std::string& exp) {
     dict.clear();
     std::string fixed;
     int requiredOperands = 1;
@@ -124,23 +124,23 @@ CResult<void, CError> CTree::enter(std::string& exp) {
         fixed += (token + " ");
     }
     if (operands < requiredOperands) {
-		return CResult<void, CError>::cFail(new CError("Not enough operands"));
+		return CResult<CTree*, CError>::cFail(new CError("Not enough operands"));
     }
     else if (operands > requiredOperands) {
-		return CResult<void, CError>::cFail(new CError("Too many operands"));
+		return CResult<CTree*, CError>::cFail(new CError("Too many operands"));
     }
     std::cout << "Processed expression:\n ";
     pos = 0;
     root = parse(fixed, pos);
     std::cout << std::endl;
-    return CResult<void, CError>::cOk();
+    return CResult<CTree*, CError>::cOk(this);
 }
 
 
 
-CResult<void, CError> CTree::join(std::string& exp) {
+CResult<CTree*, CError> CTree::join(std::string& exp) {
     CTree newTree;
-    CResult<void, CError> res = newTree.enter(exp);
+    CResult<CTree*, CError> res = newTree.enter(exp);
     if (!res.bIsSuccess()) {
         return res;
     }
@@ -148,7 +148,7 @@ CResult<void, CError> CTree::join(std::string& exp) {
     *this = *this + newTree;
     std::cout << "New tree:\n";
     print();
-	return CResult<void, CError>::cOk();
+	return CResult<CTree*, CError>::cOk(this);
 }
 
 CNode* CTree::cloneSubtree(CNode* node) const {

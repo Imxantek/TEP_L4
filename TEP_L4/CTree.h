@@ -30,8 +30,8 @@ public:
 	CNode* cloneSubtree(CNode* node) const;
 	CNode* deepestLeft(CNode* node) const;
 
-	CResult<void, CError> enter(std::string& exp);
-	CResult<void, CError> join(std::string& exp);
+	CResult<CTree*, CError> enter(std::string& exp);
+	CResult<CTree*, CError> join(std::string& exp);
 	CResult<void, CError> print() const;
 	void print(CNode* node) const;
 	void scanDict(CNode* node);

@@ -67,7 +67,7 @@ void UI::run() {
 			}
 		}
 		else if (sel == "join") {
-			CResult<void, CError> result = join();
+			CResult<CTree*, CError> result = join();
 			logger.log(result);
 			if (result.bIsSuccess()) {
 				std::cout << "\nCTrees joined successfully.\n";
@@ -102,13 +102,8 @@ CResult<CTree*, CError> UI::enter() {
 	//std::cout << "Enter your expression:\n";
 	std::string exp;
 	std::getline(std::cin, exp);
-	CResult<void, CError> result = t->enter(exp);
-	if (result.bIsSuccess()) {
-		return CResult<CTree*, CError>::cOk(t);
-	}
-	else {
-		return CResult<CTree*, CError>::cFail(result.vGetErrors());
-	}
+	CResult<CTree*, CError> result = t->enter(exp);
+	return result;
 }
 
 CResult<void, CError> UI::vars() {
@@ -150,11 +145,11 @@ CResult<void, CError> UI::comp() {
 	return result;
 }
 
-CResult<void, CError> UI::join() {
+CResult<CTree*, CError> UI::join() {
 	std::cout << "Enter the formula of the CTree you will be joining:\n";
 	std::string exp;
 	std::getline(std::cin, exp);
-	CResult<void, CError> result = t->join(exp);
+	CResult<CTree*, CError> result = t->join(exp);
 	return result;
 }
 //

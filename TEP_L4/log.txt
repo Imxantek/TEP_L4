@@ -1,19 +1,17 @@
 Operation succeeded. Current CTree:
-+ 1 / a b 
++ 1 * 43 62 
+Operation failed with errors:
+- Too many operands
+Operation failed with errors:
+- Not enough operands
+Operation succeeded.
+Operation succeeded. Current CTree:
++ + 1 / a b * 43 62 
+Operation succeeded.
+Operation succeeded.
 Operation failed with errors:
 - Not enough variable assignments provided
 Operation failed with errors:
 - Too many variable assignments provided
 Operation failed with errors:
 - Division by zero
-Operation failed with errors:
-- Non-numeric value entered in comp command.
-Operation failed with errors:
-- Too many operands
-Operation succeeded. Current CTree:
-asnsjnkadnksdn 
-Operation failed with errors:
-- Too many operands
-Operation succeeded.
-Operation succeeded.
-Operation succeeded.
